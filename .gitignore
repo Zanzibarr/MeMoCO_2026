@@ -1,0 +1,5 @@
+*.local
+*.venv
+*.vscode
+*.DS_Store
+*.lp
