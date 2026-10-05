@@ -1,4 +1,3 @@
-#include <array>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
