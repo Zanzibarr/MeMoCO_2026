@@ -71,7 +71,7 @@ inline auto CPLEX_add_constraint(CPXENVptr env, CPXLPptr lp, double rhs, char se
     CPLEX_call(CPXaddrows, env, lp, 0, 1, std::ssize(indices), &rhs, &sense, &begin, indices.data(), coeffs.data(), nullptr, &name);
 };
 
-inline auto print_solution(CPXENVptr env, CPXLPptr lp) -> void {
+inline auto CPLEX_print_solution(CPXENVptr env, CPXLPptr lp) -> void {
     // Check whether a solution exists
     int sol_type{0};
     CPLEX_call(CPXsolninfo, env, lp, nullptr, &sol_type, nullptr, nullptr);

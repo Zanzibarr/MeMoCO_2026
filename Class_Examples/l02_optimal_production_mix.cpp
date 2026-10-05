@@ -35,7 +35,7 @@ constexpr std::array<std::array<double, J>, I> Q{{
     {0.3, 0.5},
 }};  // Q[i][j] = amount of resource i in I required for each unit of product j in J
 
-auto write_lp(CPXENVptr env, CPXLPptr lp) -> void {
+auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables (x_j has index j)
     for (int j = 0; j < J; ++j) {
         CPLEX_add_variable(env, lp, P[j], 0, CPX_INFBOUND, 'C', std::format("x_{}", j).data());
@@ -65,11 +65,11 @@ auto main() -> int {
     auto [env, lp] = CPLEX_open("production_mix");
 
     try {
-        write_lp(env, lp);
+        CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
-        print_solution(env, lp);
+        CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
         std::cerr << e.what();
         exit_code = EXIT_FAILURE;

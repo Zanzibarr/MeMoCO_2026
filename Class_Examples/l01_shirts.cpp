@@ -32,7 +32,7 @@
 // x_s, x_b in Z_+
 
 namespace {
-auto write_lp(CPXENVptr env, CPXLPptr lp) -> void {
+auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables
     CPLEX_add_variable(env, lp, 24, 0, CPX_INFBOUND, 'I', std::string("x_s").data());
     CPLEX_add_variable(env, lp, 16, 0, CPX_INFBOUND, 'I', std::string("x_b").data());
@@ -59,11 +59,11 @@ auto main() -> int {
     auto [env, lp] = CPLEX_open("shirts");
 
     try {
-        write_lp(env, lp);
+        CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
-        print_solution(env, lp);
+        CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
         std::cerr << e.what();
         exit_code = EXIT_FAILURE;

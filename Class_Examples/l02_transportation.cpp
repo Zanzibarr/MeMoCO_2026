@@ -39,7 +39,7 @@ constexpr std::array<std::array<double, J>, I> C{{
 // Index of variable x_ij
 constexpr auto x(int i, int j) -> int { return i * J + j; }
 
-auto write_lp(CPXENVptr env, CPXLPptr lp) -> void {
+auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables
     for (int i = 0; i < I; ++i) {
         for (int j = 0; j < J; ++j) {
@@ -80,11 +80,11 @@ auto main() -> int {
     auto [env, lp] = CPLEX_open("transportation");
 
     try {
-        write_lp(env, lp);
+        CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
-        print_solution(env, lp);
+        CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
         std::cerr << e.what();
         exit_code = EXIT_FAILURE;

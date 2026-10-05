@@ -28,7 +28,7 @@
 // x_t, x_p in R_+
 
 namespace {
-auto write_lp(CPXENVptr env, CPXLPptr lp) -> void {
+auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables
     CPLEX_add_variable(env, lp, 6000, 0, CPX_INFBOUND, 'C', std::string("x_t").data());
     CPLEX_add_variable(env, lp, 7000, 0, CPX_INFBOUND, 'C', std::string("x_p").data());
@@ -53,11 +53,11 @@ auto main() -> int {
     auto [env, lp] = CPLEX_open("farmer");
 
     try {
-        write_lp(env, lp);
+        CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
-        print_solution(env, lp);
+        CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
         std::cerr << e.what();
         exit_code = EXIT_FAILURE;

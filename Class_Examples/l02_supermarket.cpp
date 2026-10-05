@@ -49,7 +49,7 @@ constexpr double M = W / std::ranges::min(C);           // big M: no store can b
 constexpr auto x(int i) -> int { return i; }
 constexpr auto y(int i) -> int { return I + i; }
 
-auto write_lp(CPXENVptr env, CPXLPptr lp) -> void {
+auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables
     for (int i = 0; i < I; ++i) {
         CPLEX_add_variable(env, lp, R[i], 0, CPX_INFBOUND, 'C', std::format("x_{}", i).data());
@@ -86,11 +86,11 @@ auto main() -> int {
     auto [env, lp] = CPLEX_open("supermarket");
 
     try {
-        write_lp(env, lp);
+        CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
-        print_solution(env, lp);
+        CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
         std::cerr << e.what();
         exit_code = EXIT_FAILURE;

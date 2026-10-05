@@ -35,7 +35,7 @@ constexpr std::array<std::array<double, J>, I> A{{
     {4, 5, 12},
 }};  // A[i][j] = amount of request j in J satisfied by one unit of resource i in I
 
-auto write_lp(CPXENVptr env, CPXLPptr lp) -> void {
+auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables (x_i has index i)
     for (int i = 0; i < I; ++i) {
         CPLEX_add_variable(env, lp, C[i], 0, CPX_INFBOUND, 'C', std::format("x_{}", i).data());
@@ -65,11 +65,11 @@ auto main() -> int {
     auto [env, lp] = CPLEX_open("cost_covering");
 
     try {
-        write_lp(env, lp);
+        CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
-        print_solution(env, lp);
+        CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
         std::cerr << e.what();
         exit_code = EXIT_FAILURE;
