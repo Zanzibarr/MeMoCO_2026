@@ -54,6 +54,11 @@ print(m.solve().objective_value)
 # The output should be 1500.0
 ```
 
+5. Run the script
+```shell
+# To run the (farmer) script
+python3 l01_farmer.py
+```
 
 ## To run the c++ scripts
 1. The first time, or after you make some changes to one of them, compile:
