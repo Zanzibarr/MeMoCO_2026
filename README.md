@@ -4,7 +4,7 @@
 1. Install CPELX through the SkillsBuild initiative: https://www.ibm.com/academic/
 
 2. Find the installation path
-```shell
+```bash
 # Default Linux path:
 ls /opt/ibm/ILOG | grep -i cplex
 # Default MacOS path:
@@ -16,8 +16,8 @@ ls /Applications | grep -i cplex
 # ...
 ```
 
-3. Create a virtual environment and install the C APIs
-```shell
+3. Create a virtual environment and install the python APIs
+```bash
 # Create and enter the virtual environment
 python3 -m venv .venv   # or with conda or uv, your choice
 source .venv/bin/activate
@@ -28,14 +28,14 @@ pip install "cplex=<version>" docplex
 ```
 
 4. Link your installation
-```shell
+```bash
 docplex config --upgrade /Applications/CPLEX_Studio<version>
 
 # Example: docplex config --upgrade /Applications/CPLEX_Studio2212
 ```
 
 5. Test your installation
-```shell
+```bash
 python3 -c "
 from docplex.mp.model import Model
 m = Model()
