@@ -29,7 +29,7 @@ pip install "cplex=<version>" docplex
 
 4. Link your installation
 ```bash
-docplex config --upgrade /Applications/CPLEX_Studio<version>
+docplex config --upgrade /path/to/CPLEX_Studio<version>
 
 # Example: docplex config --upgrade /Applications/CPLEX_Studio2212
 ```
