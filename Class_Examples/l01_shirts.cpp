@@ -2,6 +2,7 @@
 #include <exception>
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "cplex_utils.hpp"
@@ -34,38 +35,40 @@
 namespace {
 auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables
-    CPLEX_add_variable(env, lp, 24, 0, CPX_INFBOUND, 'I', std::string("x_s").data());
-    CPLEX_add_variable(env, lp, 16, 0, CPX_INFBOUND, 'I', std::string("x_b").data());
+    CPLEX_add_variable(env, lp, 24, 0, CPX_INFBOUND, 'I', "x_s");
+    CPLEX_add_variable(env, lp, 16, 0, CPX_INFBOUND, 'I', "x_b");
     auto [x_s, x_b] = std::pair{0, 1};
 
     // Adding the constraints
-    CPLEX_add_constraint(env, lp, 10, 'L', {x_s}, {1}, std::string("t-shirts").data());
-    CPLEX_add_constraint(env, lp, 15, 'L', {x_b}, {1}, std::string("bags").data());
-    CPLEX_add_constraint(env, lp, 32, 'L', {x_s, x_b}, {6, 3}, std::string("stickers").data());
-    CPLEX_add_constraint(env, lp, 40, 'L', {x_s, x_b}, {2, 5}, std::string("trims").data());
-    CPLEX_add_constraint(env, lp, 15, 'L', {x_b}, {2}, std::string("buttons").data());
-    CPLEX_add_constraint(env, lp, 22, 'L', {x_s, x_b}, {1, 2}, std::string("labels").data());
+    CPLEX_add_constraint(env, lp, 10, 'L', {x_s}, {1}, "tshirts");
+    CPLEX_add_constraint(env, lp, 15, 'L', {x_b}, {1}, "bags");
+    CPLEX_add_constraint(env, lp, 32, 'L', {x_s, x_b}, {6, 3}, "stickers");
+    CPLEX_add_constraint(env, lp, 40, 'L', {x_s, x_b}, {2, 5}, "trims");
+    CPLEX_add_constraint(env, lp, 15, 'L', {x_b}, {2}, "buttons");
+    CPLEX_add_constraint(env, lp, 22, 'L', {x_s, x_b}, {1, 2}, "labels");
 
     // Objective sense (maximize)
     CPLEX_call(CPXchgobjsen, env, lp, CPX_MAX);
 
     // Write .lp to check if the model is correct
-    CPLEX_call(CPXwriteprob, env, lp, "test.lp", nullptr);
+    CPLEX_call(CPXwriteprob, env, lp, "shirts.lp", nullptr);
 }
 }  // namespace
 
 auto main() -> int {
     auto exit_code = EXIT_SUCCESS;
-    auto [env, lp] = CPLEX_open("shirts");
+    CPXENVptr env{nullptr};
+    CPXLPptr lp{nullptr};
 
     try {
+        std::tie(env, lp) = CPLEX_open("shirts");
         CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
         CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
-        std::cerr << e.what();
+        std::cerr << e.what() << '\n';
         exit_code = EXIT_FAILURE;
     }
 

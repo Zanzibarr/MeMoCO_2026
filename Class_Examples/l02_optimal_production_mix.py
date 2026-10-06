@@ -11,7 +11,7 @@ Q_ij: amount of resource i in I required for each unit of product j in J
 x_j : amount of product j in J
 
 == Model
-max sum_{i in J} P_j x_j
+max sum_{j in J} P_j x_j
 s.t.
 sum_{j in J} Q_ij x_j <= D_i     forall i in I
 x_j in R_+/Z_+/{0,1} (depends on the type of product)       forall j in J
@@ -24,7 +24,7 @@ model = Model(name="production_mix")
 I = range(3)  # rose, lily and violet
 J = range(2)  # perfume 1 and perfume 2
 D = [27, 21, 9]  # D[i] = availability of resource i in I
-P = [130, 100]  # P[j] = profit of resource j in J
+P = [130, 100]  # P[j] = profit of product j in J
 Q = [
     [1.5, 1],
     [1, 1],

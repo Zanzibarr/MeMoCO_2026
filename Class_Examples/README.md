@@ -21,5 +21,5 @@ make all
 
 2. Run the (farmer) program
 ```shell
-./farmer
+./build/farmer
 ```

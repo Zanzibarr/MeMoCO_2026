@@ -2,6 +2,7 @@
 #include <exception>
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "cplex_utils.hpp"
@@ -30,36 +31,38 @@
 namespace {
 auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables
-    CPLEX_add_variable(env, lp, 6000, 0, CPX_INFBOUND, 'C', std::string("x_t").data());
-    CPLEX_add_variable(env, lp, 7000, 0, CPX_INFBOUND, 'C', std::string("x_p").data());
+    CPLEX_add_variable(env, lp, 6000, 0, CPX_INFBOUND, 'C', "x_t");
+    CPLEX_add_variable(env, lp, 7000, 0, CPX_INFBOUND, 'C', "x_p");
     auto [x_t, x_p] = std::pair{0, 1};
 
     // Adding the constraints
-    CPLEX_add_constraint(env, lp, 11, 'L', {x_t, x_p}, {1, 1}, std::string("land").data());
-    CPLEX_add_constraint(env, lp, 70, 'L', {x_t}, {7}, std::string("tomato seeds").data());
-    CPLEX_add_constraint(env, lp, 18, 'L', {x_p}, {3}, std::string("potato tubers").data());
-    CPLEX_add_constraint(env, lp, 145, 'L', {x_t, x_p}, {10, 20}, std::string("fertilizer").data());
+    CPLEX_add_constraint(env, lp, 11, 'L', {x_t, x_p}, {1, 1}, "land");
+    CPLEX_add_constraint(env, lp, 70, 'L', {x_t}, {7}, "tomato_seeds");
+    CPLEX_add_constraint(env, lp, 18, 'L', {x_p}, {3}, "potato_tubers");
+    CPLEX_add_constraint(env, lp, 145, 'L', {x_t, x_p}, {10, 20}, "fertilizer");
 
     // Objective sense (maximize)
     CPLEX_call(CPXchgobjsen, env, lp, CPX_MAX);
 
     // Write .lp to check if the model is correct
-    CPLEX_call(CPXwriteprob, env, lp, "test.lp", nullptr);
+    CPLEX_call(CPXwriteprob, env, lp, "farmer.lp", nullptr);
 }
 }  // namespace
 
 auto main() -> int {
     auto exit_code = EXIT_SUCCESS;
-    auto [env, lp] = CPLEX_open("farmer");
+    CPXENVptr env{nullptr};
+    CPXLPptr lp{nullptr};
 
     try {
+        std::tie(env, lp) = CPLEX_open("farmer");
         CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
         CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
-        std::cerr << e.what();
+        std::cerr << e.what() << '\n';
         exit_code = EXIT_FAILURE;
     }
 

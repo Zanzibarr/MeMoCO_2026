@@ -1,10 +1,9 @@
 #include <algorithm>
-#include <array>
 #include <cstdlib>
 #include <exception>
-#include <format>
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "cplex_utils.hpp"
@@ -38,12 +37,12 @@
 
 namespace {
 // Data
-constexpr int I = 4;                                    // candidate locations
-constexpr double W = 1000;                              // available budget
-constexpr std::array<double, I> F{200, 150, 300, 100};  // F[i] = fixed cost for opening a store in i in I
-constexpr std::array<double, I> C{40, 50, 30, 60};      // C[i] = variable cost per 100 m2 of store in i in I
-constexpr std::array<double, I> R{90, 100, 75, 110};    // R[i] = revenue per 100 m2 of store in i in I
-constexpr double M = W / std::ranges::min(C);           // big M: no store can be larger than the budget allows
+constexpr int I = 4;                              // candidate locations
+constexpr double W = 1000;                        // available budget
+const std::vector<double> F{200, 150, 300, 100};  // F[i] = fixed cost for opening a store in i in I
+const std::vector<double> C{40, 50, 30, 60};      // C[i] = variable cost per 100 m2 of store in i in I
+const std::vector<double> R{90, 100, 75, 110};    // R[i] = revenue per 100 m2 of store in i in I
+const double M = W / std::ranges::min(C);         // big M: no store can be larger than the budget allows
 
 // Variable indices
 constexpr auto x(int i) -> int { return i; }
@@ -51,12 +50,8 @@ constexpr auto y(int i) -> int { return I + i; }
 
 auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables
-    for (int i = 0; i < I; ++i) {
-        CPLEX_add_variable(env, lp, R[i], 0, CPX_INFBOUND, 'C', std::format("x_{}", i).data());
-    }
-    for (int i = 0; i < I; ++i) {
-        CPLEX_add_variable(env, lp, 0, 0, 1, 'B', std::format("y_{}", i).data());
-    }
+    CPLEX_add_variables(env, lp, I, R, {}, {}, {}, make_names("x", I));
+    CPLEX_add_variables(env, lp, I, {}, {}, {}, std::vector<char>(I, 'B'), make_names("y", I));
 
     // Adding the constraints
     std::vector<int> indices;
@@ -67,32 +62,38 @@ auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
         indices.push_back(y(i));
         coeffs.push_back(F[i]);
     }
-    CPLEX_add_constraint(env, lp, W, 'L', indices, coeffs, std::string("budget").data());
+    CPLEX_add_constraint(env, lp, W, 'L', indices, coeffs, "budget");
 
+    std::vector<std::vector<int>> big_M_indices;
+    std::vector<std::vector<double>> big_M_coeffs;
     for (int i = 0; i < I; ++i) {
-        CPLEX_add_constraint(env, lp, 0, 'L', {x(i), y(i)}, {1, -M}, std::format("big_M_{}", i).data());
+        big_M_indices.push_back({x(i), y(i)});
+        big_M_coeffs.push_back({1, -M});
     }
+    CPLEX_add_constraints(env, lp, I, std::vector<double>(I, 0), std::vector<char>(I, 'L'), big_M_indices, big_M_coeffs, make_names("big_M", I));
 
     // Objective sense (maximize)
     CPLEX_call(CPXchgobjsen, env, lp, CPX_MAX);
 
     // Write .lp to check if the model is correct
-    CPLEX_call(CPXwriteprob, env, lp, "test.lp", nullptr);
+    CPLEX_call(CPXwriteprob, env, lp, "supermarket.lp", nullptr);
 }
 }  // namespace
 
 auto main() -> int {
     auto exit_code = EXIT_SUCCESS;
-    auto [env, lp] = CPLEX_open("supermarket");
+    CPXENVptr env{nullptr};
+    CPXLPptr lp{nullptr};
 
     try {
+        std::tie(env, lp) = CPLEX_open("supermarket");
         CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
         CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
-        std::cerr << e.what();
+        std::cerr << e.what() << '\n';
         exit_code = EXIT_FAILURE;
     }
 

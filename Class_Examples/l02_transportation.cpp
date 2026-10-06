@@ -1,9 +1,9 @@
-#include <array>
 #include <cstdlib>
 #include <exception>
 #include <format>
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "cplex_utils.hpp"
@@ -28,13 +28,13 @@ namespace {
 // Data (with the refrigerators example)
 constexpr int I = 3;  // factories A, B and C
 constexpr int J = 4;  // stores 1, 2, 3 and 4
-constexpr std::array<double, I> O{50, 70, 30};
-constexpr std::array<double, J> D{20, 60, 30, 40};
-constexpr std::array<std::array<double, J>, I> C{{
+const std::vector<double> O{50, 70, 30};
+const std::vector<double> D{20, 60, 30, 40};
+const std::vector<std::vector<double>> C{
     {6, 8, 3, 4},
     {4, 2, 1, 3},
     {4, 2, 6, 5},
-}};
+};
 
 // Index of variable x_ij
 constexpr auto x(int i, int j) -> int { return i * J + j; }
@@ -42,51 +42,51 @@ constexpr auto x(int i, int j) -> int { return i * J + j; }
 auto CPLEX_write_lp(CPXENVptr env, CPXLPptr lp) -> void {
     // Adding the variables
     for (int i = 0; i < I; ++i) {
-        for (int j = 0; j < J; ++j) {
-            CPLEX_add_variable(env, lp, C[i][j], 0, CPX_INFBOUND, 'I', std::format("x_{}_{}", i, j).data());
-        }
+        CPLEX_add_variables(env, lp, J, C[i], {}, {}, std::vector<char>(J, 'I'), make_names(std::format("x_{}", i), J));
     }
 
-    // Adding the constraints
+    // Adding the request constraints (one per destination j)
+    std::vector<std::vector<int>> request_indices(J);
     for (int j = 0; j < J; ++j) {
-        std::vector<int> indices;
-        std::vector<double> coeffs;
         for (int i = 0; i < I; ++i) {
-            indices.push_back(x(i, j));
-            coeffs.push_back(1);
+            request_indices[j].push_back(x(i, j));
         }
-        CPLEX_add_constraint(env, lp, D[j], 'G', indices, coeffs, std::format("request_{}", j).data());
     }
+    CPLEX_add_constraints(env, lp, J, D, std::vector<char>(J, 'G'), request_indices, std::vector<std::vector<double>>(J, std::vector<double>(I, 1)),
+                          make_names("request", J));
+
+    // Adding the capacity constraints (one per origin i)
+    std::vector<std::vector<int>> capacity_indices(I);
     for (int i = 0; i < I; ++i) {
-        std::vector<int> indices;
-        std::vector<double> coeffs;
         for (int j = 0; j < J; ++j) {
-            indices.push_back(x(i, j));
-            coeffs.push_back(1);
+            capacity_indices[i].push_back(x(i, j));
         }
-        CPLEX_add_constraint(env, lp, O[i], 'L', indices, coeffs, std::format("capacity_{}", i).data());
     }
+    CPLEX_add_constraints(env, lp, I, O, std::vector<char>(I, 'L'), capacity_indices, std::vector<std::vector<double>>(I, std::vector<double>(J, 1)),
+                          make_names("capacity", I));
 
     // Objective sense (minimize)
     CPLEX_call(CPXchgobjsen, env, lp, CPX_MIN);
 
     // Write .lp to check if the model is correct
-    CPLEX_call(CPXwriteprob, env, lp, "test.lp", nullptr);
+    CPLEX_call(CPXwriteprob, env, lp, "transportation.lp", nullptr);
 }
 }  // namespace
 
 auto main() -> int {
     auto exit_code = EXIT_SUCCESS;
-    auto [env, lp] = CPLEX_open("transportation");
+    CPXENVptr env{nullptr};
+    CPXLPptr lp{nullptr};
 
     try {
+        std::tie(env, lp) = CPLEX_open("transportation");
         CPLEX_write_lp(env, lp);
 
         CPLEX_call(CPXmipopt, env, lp);
 
         CPLEX_print_solution(env, lp);
     } catch (const std::exception& e) {
-        std::cerr << e.what();
+        std::cerr << e.what() << '\n';
         exit_code = EXIT_FAILURE;
     }
 

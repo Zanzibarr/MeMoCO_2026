@@ -16,15 +16,24 @@ LDLIBS   := -lilocplex -lconcert -lcplex -lm -lpthread
 SRCS  := $(wildcard l[0-9][0-9]_*.cpp)
 NAMES := $(shell echo $(SRCS:.cpp=) | tr ' ' '\n' | sed -E 's/^l[0-9]+_//')
 
-.PHONY: all clean list
-all: $(NAMES)
+BUILD_DIR := build
+BINS      := $(addprefix $(BUILD_DIR)/,$(NAMES))
+
+.PHONY: all clean list $(NAMES)
+all: $(BINS)
+
+# make farmer -> builds build/farmer
+$(NAMES): %: $(BUILD_DIR)/%
 
 .SECONDEXPANSION:
-$(NAMES): %: $$(wildcard l[0-9][0-9]_%.cpp) ../cplex_utils.hpp
+$(BINS): $(BUILD_DIR)/%: $$(wildcard l[0-9][0-9]_%.cpp) ../cplex_utils.hpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LDFLAGS) $(LDLIBS)
+
+$(BUILD_DIR):
+	mkdir -p $@
 
 list:
 	@echo $(NAMES)
 
 clean:
-	rm -f $(NAMES)
+	rm -f $(BINS)
