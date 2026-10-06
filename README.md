@@ -1,7 +1,7 @@
 # Installing CPLEX and DOCPLEX
 
 ## CPLEX installation
-1. Install CPELX through the SkillsBuild initiative: https://www.ibm.com/academic/
+1. Install CPLEX through the SkillsBuild initiative: https://www.ibm.com/academic/
 
 2. Find the installation path
 ```bash
