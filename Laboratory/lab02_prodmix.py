@@ -1,5 +1,5 @@
 from docplex.mp.model import Model
-from lab02_prodmix_data import perfumes as data
+from data.lab02_prodmix_data import perfumes as data
 
 model = Model(name=data.model_name)
 

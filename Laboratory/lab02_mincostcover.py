@@ -1,5 +1,5 @@
 from docplex.mp.model import Model
-from lab02_mincostcover_data import diet as data
+from data.lab02_mincostcover_data import diet as data
 
 model = Model(name=data.model_name)
 
