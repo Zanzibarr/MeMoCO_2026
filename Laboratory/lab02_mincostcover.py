@@ -1,39 +1,47 @@
 from docplex.mp.model import Model
-from data.lab02_mincostcover_data import diet as data
 
-model = Model(name=data.model_name)
+model_name = "mincostcover_diet"
+var_type = "cont"
+I = ["V", "M", "F"]
+J = ["proteins", "iron", "calcium"]
+C = {"V": 4, "M": 10, "F": 7}
+R = {"proteins": 20, "iron": 30, "calcium": 10}
+A = {
+    ("V", "proteins"): 5,
+    ("V", "iron"): 6,
+    ("V", "calcium"): 5,
+    ("M", "proteins"): 15,
+    ("M", "iron"): 10,
+    ("M", "calcium"): 3,
+    ("F", "proteins"): 4,
+    ("F", "iron"): 5,
+    ("F", "calcium"): 12,
+}
+
+m = Model(name=model_name)
 
 # Create the variables and store them into a dictionary
-if data.var_type == "cont":
-    x = model.continuous_var_dict(data.I, name="x")
-elif data.var_type == "int":
-    x = model.integer_var_dict(data.I, name="x")
-elif data.var_type == "bin":
-    x = model.binary_var_dict(data.I, name="x")
+if var_type == "cont":
+    x = m.continuous_var_dict(I, name="x")
+elif var_type == "int":
+    x = m.integer_var_dict(I, name="x")
+elif var_type == "bin":
+    x = m.binary_var_dict(I, name="x")
 else:
     print("ERROR: wrong var type")
     exit(1)
 
 # Add the constraints
-model.add_constraints(
-    model.sum(data.A[i, j] * x[i] for i in data.I) >= data.R[j] for j in data.J
-)
+m.add_constraints(m.sum(A[i, j] * x[i] for i in I) >= R[j] for j in J)
 
 # Set the objective function
-model.minimize(model.sum(data.C[i] * x[i] for i in data.I))
+m.minimize(m.sum(C[i] * x[i] for i in I))
 
 # Write the lp
-model.export_as_lp(f"{data.model_name}.lp")
-
-# Solve
-solution = model.solve(log_output=False)
+m.export_as_lp(f"{model_name}.lp")
 
 # Print solution
-if solution is not None:
-    print(f"===================================================")
-    print(f"Objective function value: {solution.objective_value}")
-    for v in model.iter_variables():
-        print(v.name, solution[v])
-    print(f"===================================================")
+if m.solve():
+    m.print_solution()
 else:
-    print(model.solve_details.status)
+    print(m.get_solve_status())
