@@ -24,30 +24,23 @@ x_t, x_p in R_+
 """
 
 # Model creation
-model = Model(name="farmer")
+m = Model(name="farmer")
 
 # Variables creation
-x_t = model.continuous_var(name="x_t", lb=0)
-x_p = model.continuous_var(name="x_p", lb=0)
+x_t = m.continuous_var(name="x_t", lb=0)
+x_p = m.continuous_var(name="x_p", lb=0)
 
 # Constraints
-model.add_constraint(x_t + x_p <= 11, ctname="land")
-model.add_constraint(7 * x_t <= 70, ctname="tomato_seeds")
-model.add_constraint(3 * x_p <= 18, ctname="potato_tubers")
-model.add_constraint(10 * x_t + 20 * x_p <= 145, ctname="fertilizer")
+m.add_constraint(x_t + x_p <= 11, ctname="land")
+m.add_constraint(7 * x_t <= 70, ctname="tomato_seeds")
+m.add_constraint(3 * x_p <= 18, ctname="potato_tubers")
+m.add_constraint(10 * x_t + 20 * x_p <= 145, ctname="fertilizer")
 
 # Objective function
-model.maximize(6000 * x_t + 7000 * x_p)
-
-# Optimization (log_output=False disables solver output)
-solution = model.solve(log_output=False)
+m.maximize(6000 * x_t + 7000 * x_p)
 
 # Print solution
-if solution is not None:
-    print(f"===================================================")
-    print(f"Objective function value: {solution.objective_value}")
-    for v in model.iter_variables():
-        print(v.name, solution[v])
-    print(f"===================================================")
+if m.solve():
+    m.print_solution()
 else:
-    print(model.solve_details.status)
+    print(m.get_solve_status())
