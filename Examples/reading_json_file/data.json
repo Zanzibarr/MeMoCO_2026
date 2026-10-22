@@ -1,0 +1,11 @@
+{
+    "example_string": "hello",
+    "example_int": 9,
+    "example_float": 11.4,
+    "example_list": [0,1,2,3,4],
+    "example_dict": {
+        "key1": "value1",
+        "key2": 2,
+        "key3": 3.14
+    }
+}
