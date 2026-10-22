@@ -1,0 +1,26 @@
+
+{
+    "modelname" : "move refrigerators",
+    "decision_domain": "discrete",
+    
+    "___comment01": "sets of origin factories I and destination stores J (a set is given as ordered list = array)",
+    "I": ["A","B","C"],
+    "J": [1,2,3,4],
+
+    "___comment02": "arrays of factories' capacity and stores' request (follow the order in the related sets)",
+    "o_list": [50,70,30],
+    "d_list": [20,60,30,40],
+
+    "___comment03": "factory-to-store cost matrix (matrix indexes follow the order in the related sets)",
+    "c_matrix": [
+                    [6,8,3,2],
+                    [4,2,1,3],
+                    [4,2,6,5]
+                ],
+    
+    "___comment_plus": "parameters for additional constraints" ,
+    "cost_threshold_percent": 0.5,
+    "LowCost": 2, "LowCostMinOnLink": 15,
+    "SpecialDestination": 3, "MinToSpecialDestination": 5, "SpecialOrigin": "A", 
+    "SignificantNumber": 2, "SignificantFraction": 0.10
+}

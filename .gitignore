@@ -5,3 +5,4 @@
 *.lp
 build
 __pycache__
+*.o
