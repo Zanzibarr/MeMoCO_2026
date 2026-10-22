@@ -1,22 +1,24 @@
 CC = g++
 CPPFLAGS = -g -Wall -O2
-LDFLAGS =
+
+NAME = transport_timing
 
 # ATTENTION!! UPDATE WITH YOUR ACTUAL PATHS
 CPX_BASE    = /Applications/CPLEX_Studio2211
 CPX_INCDIR  = $(CPX_BASE)/cplex/include
-CPX_LIBDIR  = $(CPX_BASE)/cplex/lib/arm64_osx/static_pic
+ARCH = arm64_osx
+CPX_LIBDIR  = $(CPX_BASE)/cplex/lib/$(ARCH)/static_pic
 CPX_LDFLAGS = -lcplex -lm -pthread -ldl
 
-OBJ = transport_timing.o 
+all: $(NAME)
 
 %.o: %.cpp
 		$(CC) $(CPPFLAGS) -I$(CPX_INCDIR) -c $^ -o $@
 
-main: $(OBJ)
-		$(CC) $(CPPFLAGS) $(OBJ) -o transport_timing -L$(CPX_LIBDIR) $(CPX_LDFLAGS)
+$(NAME): $(NAME).o
+		$(CC) $(CPPFLAGS) $(NAME).o -o $(NAME) -L$(CPX_LIBDIR) $(CPX_LDFLAGS)
 
 clean:
-		rm -rf $(OBJ) transport_timing
+		rm -rf $(NAME).o $(NAME)
 
-.PHONY: clean
+.PHONY: all clean
