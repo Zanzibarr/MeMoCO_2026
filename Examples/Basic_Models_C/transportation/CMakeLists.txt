@@ -4,21 +4,21 @@ project(cplex_examples CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Release by default with single-configuration generators (Makefile, Ninja)
+# Default to Release with single-configuration generators (Makefile, Ninja)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # ---------------------------------------------------------------------------
-# Locating CPLEX
+# CPLEX lookup
 #
 # Search order:
 #   1. -DCPLEX_DIR=/path/to/CPLEX_Studio2211   (command line)
 #   2. CPLEX_DIR environment variable
-#   3. CPLEX_STUDIO_DIR<version> environment variables (created by the Windows installer)
-#   4. default installation paths (the most recent version is used)
+#   3. CPLEX_STUDIO_DIR<version> environment variables (set by the Windows installer)
+#   4. default install locations (the most recent version is used)
 # ---------------------------------------------------------------------------
-set(CPLEX_DIR "" CACHE PATH "CPLEX Studio installation folder (contains the 'cplex' folder)")
+set(CPLEX_DIR "" CACHE PATH "CPLEX Studio installation directory (contains the 'cplex' folder)")
 
 set(_cplex_candidates "")
 if(CPLEX_DIR)
@@ -39,7 +39,7 @@ foreach(_entry ${_env_dirs})
   list(APPEND _cplex_candidates "${_dir}")
 endforeach()
 
-# Default paths of the IBM installers
+# Default IBM installer locations
 if(WIN32)
   set(_cplex_default_globs
     "C:/Program Files/IBM/ILOG/CPLEX_Studio*"
@@ -74,18 +74,17 @@ endforeach()
 if(NOT _cplex_root)
   message(FATAL_ERROR
     "CPLEX not found. Paths tried:\n  ${_cplex_candidates}\n"
-    "Specify the installation folder with  -DCPLEX_DIR=/path/to/CPLEX_StudioXXXX")
+    "Specify the installation directory with  -DCPLEX_DIR=/path/to/CPLEX_StudioXXXX")
 endif()
-set(CPLEX_DIR "${_cplex_root}" CACHE PATH "CPLEX Studio installation folder" FORCE)
+set(CPLEX_DIR "${_cplex_root}" CACHE PATH "CPLEX Studio installation directory" FORCE)
 
-# Machine architecture, to pick the right library
+# Machine architecture, used to pick the right library
 string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" _arch)
 if(_arch MATCHES "^(x86_64|amd64)$")
   set(_arch "x86-64")
 elseif(_arch MATCHES "^(arm64|aarch64)$")
   set(_arch "arm64")
 endif()
-
 set(_cplex_osx_arch "")
 if(WIN32)
   # On Windows CPLEX only supports 64-bit MSVC; stat_mda = /MD runtime
@@ -96,7 +95,7 @@ if(WIN32)
   file(GLOB CPLEX_DLL "${CPLEX_DIR}/cplex/bin/x64_win64/cplex[0-9]*.dll")
   list(SORT CPLEX_LIBRARY COMPARE NATURAL ORDER DESCENDING)
   list(GET CPLEX_LIBRARY 0 CPLEX_LIBRARY)
-  # the library is compiled with /MD: use the same runtime in Debug too
+  # the library is built with /MD: use the same runtime in Debug too
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
 else()
   # Linux: x86-64_linux, arm64_linux, ppc64le_linux, s390x_linux
@@ -109,7 +108,7 @@ else()
     endif()
   endforeach()
   if(NOT CPLEX_LIBRARY AND _libs)
-    # e.g. Apple Silicon Mac with only the Intel version of CPLEX: compile for x86_64 (runs under Rosetta)
+    # e.g. Apple Silicon Mac with Intel-only CPLEX: build for x86_64 (runs under Rosetta)
     list(GET _libs 0 CPLEX_LIBRARY)
     if(APPLE AND CPLEX_LIBRARY MATCHES "/x86-64_osx/")
       set(_cplex_osx_arch "x86_64")
@@ -126,11 +125,32 @@ if(NOT CPLEX_LIBRARY OR NOT EXISTS "${CPLEX_LIBRARY}")
   message(FATAL_ERROR "CPLEX library not found in ${CPLEX_DIR}/cplex/lib")
 endif()
 
+# macOS: CPLEX requires some system frameworks (-framework ...). They are read from the
+# example Makefile shipped with CPLEX (CLNFLAGS line), so they always match the
+# installed version; if the Makefile is missing, CoreFoundation and IOKit are used.
+set(CPLEX_FRAMEWORKS "")
+if(APPLE)
+  string(REGEX REPLACE "/lib/([^/]+)/static_pic/libcplex\\.a$" "/examples/\\1/static_pic/Makefile"
+         _cplex_makefile "${CPLEX_LIBRARY}")
+  if(EXISTS "${_cplex_makefile}")
+    file(STRINGS "${_cplex_makefile}" _clnflags REGEX "^CLNFLAGS")
+    string(REGEX MATCHALL "-framework[ \t]+[A-Za-z0-9_]+" _fw_flags "${_clnflags}")
+    foreach(_fw ${_fw_flags})
+      string(REGEX REPLACE "-framework[ \t]+" "" _fw "${_fw}")
+      list(APPEND CPLEX_FRAMEWORKS "-framework ${_fw}")
+    endforeach()
+    list(REMOVE_DUPLICATES CPLEX_FRAMEWORKS)
+  else()
+    set(CPLEX_FRAMEWORKS "-framework CoreFoundation" "-framework IOKit")
+  endif()
+  message(STATUS "CPLEX frameworks: ${CPLEX_FRAMEWORKS}")
+endif()
+
 message(STATUS "CPLEX: ${CPLEX_DIR}")
 message(STATUS "CPLEX library: ${CPLEX_LIBRARY}")
 
 # ---------------------------------------------------------------------------
-# File to compile: NAME.cpp -> executable NAME
+# File to build: NAME.cpp -> executable NAME
 # Change the value below, or pass it on the command line:  -DNAME=other_file
 # ---------------------------------------------------------------------------
 set(NAME_DEFAULT "transportation")
@@ -149,13 +169,13 @@ target_include_directories(${NAME} PRIVATE "${CPLEX_DIR}/cplex/include")
 target_link_libraries(${NAME} PRIVATE "${CPLEX_LIBRARY}")
 if(WIN32)
   target_compile_definitions(${NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
-  # copy cplexXXXX.dll next to the executable, so it runs even if the DLL is not in the PATH
+  # copy cplexXXXX.dll next to the executable, so it runs even if the DLL is not in PATH
   if(CPLEX_DLL)
     add_custom_command(TARGET ${NAME} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CPLEX_DLL} $<TARGET_FILE_DIR:${NAME}>)
   endif()
 else()
-  target_link_libraries(${NAME} PRIVATE Threads::Threads m ${CMAKE_DL_LIBS})
+  target_link_libraries(${NAME} PRIVATE Threads::Threads m ${CMAKE_DL_LIBS} ${CPLEX_FRAMEWORKS})
   if(_cplex_osx_arch)
     set_target_properties(${NAME} PROPERTIES OSX_ARCHITECTURES ${_cplex_osx_arch})
   endif()
