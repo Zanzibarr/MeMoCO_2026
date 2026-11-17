@@ -1,7 +1,7 @@
 from docplex.mp.model import Model
 import json
 
-with open("data/lab03_facility_loc_basic_and_plus.json", "r") as file:
+with open("../Data/facility_loc_basic_and_plus.json", "r") as file:
     data = json.load(file)
 
 # SETS

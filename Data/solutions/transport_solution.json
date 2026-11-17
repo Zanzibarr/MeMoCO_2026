@@ -1,0 +1,201 @@
+{
+    "CPLEXSolution": {
+        "version": "1.0",
+        "header": {
+            "problemName": "transportation",
+            "objectiveValue": "342.0",
+            "solved_by": "cplex_local"
+        },
+        "variables": [
+            {
+                "index": "0",
+                "name": "x_A_3",
+                "value": "14.0"
+            },
+            {
+                "index": "1",
+                "name": "x_A_4",
+                "value": "36.0"
+            },
+            {
+                "index": "2",
+                "name": "x_B_1",
+                "value": "5.0"
+            },
+            {
+                "index": "3",
+                "name": "x_B_2",
+                "value": "45.0"
+            },
+            {
+                "index": "4",
+                "name": "x_B_3",
+                "value": "16.0"
+            },
+            {
+                "index": "5",
+                "name": "x_B_4",
+                "value": "4.0"
+            },
+            {
+                "index": "6",
+                "name": "x_C_1",
+                "value": "15.0"
+            },
+            {
+                "index": "7",
+                "name": "x_C_2",
+                "value": "15.0"
+            },
+            {
+                "index": "8",
+                "name": "y_A_3",
+                "value": "1.0"
+            },
+            {
+                "index": "9",
+                "name": "y_A_4",
+                "value": "1.0"
+            },
+            {
+                "index": "10",
+                "name": "y_B_1",
+                "value": "1.0"
+            },
+            {
+                "index": "11",
+                "name": "y_B_2",
+                "value": "1.0"
+            },
+            {
+                "index": "12",
+                "name": "y_B_3",
+                "value": "1.0"
+            },
+            {
+                "index": "13",
+                "name": "y_B_4",
+                "value": "1.0"
+            },
+            {
+                "index": "14",
+                "name": "y_C_1",
+                "value": "1.0"
+            },
+            {
+                "index": "15",
+                "name": "y_C_2",
+                "value": "1.0"
+            }
+        ],
+        "linearConstraints": [
+            {
+                "name": null,
+                "index": 0
+            },
+            {
+                "name": null,
+                "index": 1
+            },
+            {
+                "name": null,
+                "index": 2
+            },
+            {
+                "name": null,
+                "index": 3
+            },
+            {
+                "name": null,
+                "index": 4
+            },
+            {
+                "name": null,
+                "index": 5
+            },
+            {
+                "name": null,
+                "index": 6
+            },
+            {
+                "name": null,
+                "index": 7,
+                "slack": -21.0
+            },
+            {
+                "name": null,
+                "index": 8,
+                "slack": -30.0
+            },
+            {
+                "name": null,
+                "index": 9,
+                "slack": -1.0
+            },
+            {
+                "name": null,
+                "index": 10
+            },
+            {
+                "name": null,
+                "index": 11,
+                "slack": -11.0
+            },
+            {
+                "name": null,
+                "index": 12
+            },
+            {
+                "name": null,
+                "index": 13
+            },
+            {
+                "name": null,
+                "index": 14
+            },
+            {
+                "name": null,
+                "index": 15
+            },
+            {
+                "name": null,
+                "index": 16,
+                "slack": -11.0
+            },
+            {
+                "name": null,
+                "index": 17,
+                "slack": -32.0
+            },
+            {
+                "name": null,
+                "index": 18,
+                "slack": -3.0
+            },
+            {
+                "name": null,
+                "index": 19,
+                "slack": -39.0
+            },
+            {
+                "name": null,
+                "index": 20,
+                "slack": -13.0
+            },
+            {
+                "name": null,
+                "index": 21
+            },
+            {
+                "name": null,
+                "index": 22,
+                "slack": -13.0
+            },
+            {
+                "name": null,
+                "index": 23,
+                "slack": -9.0
+            }
+        ]
+    }
+}

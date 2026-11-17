@@ -1,0 +1,34 @@
+{
+    "modelname": "farmer 4.0",
+    "Resources_I": [
+        "land",
+        "tomato seeds",
+        "potato tubers",
+        "fertilizer"
+    ],
+    "Products_J": [
+        "tomato",
+        "potato"
+    ],
+    "D": {
+        "land": 11,
+        "tomato seeds": 70,
+        "potato tubers": 18,
+        "fertilizer": 145
+    },
+    "P": {
+        "tomato": 6000,
+        "potato": 7000
+    },
+    "Q": {
+        "('land','tomato')": 1,
+        "('tomato seeds','tomato')": 7,
+        "('potato tubers','tomato')": 0,
+        "('fertilizer','tomato')": 10,
+        "('land','potato')": 1,
+        "('tomato seeds','potato')": 0,
+        "('potato tubers','potato')": 3,
+        "('fertilizer','potato')": 20
+    },
+    "decision_domain": "continuous"
+}

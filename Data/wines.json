@@ -1,0 +1,40 @@
+{
+    "modelname": "wines",
+    "Resources_I": [
+        "grape1",
+        "grape2",
+        "grape3",
+        "grape4"
+    ],
+    "Products_J": [
+        "wine1",
+        "wine2",
+        "wine3"
+    ],
+    "D": {
+        "grape1": 100,
+        "grape2": 200,
+        "grape3": 50,
+        "grape4": 150
+    },
+    "P": {
+        "wine1": 21,
+        "wine2": 15,
+        "wine3": 10
+    },
+    "Q": {
+        "('grape1','wine1')": 1.5,
+        "('grape1','wine2')": 1.0,
+        "('grape1','wine3')": 1.7,
+        "('grape2','wine1')": 0.8,
+        "('grape2','wine2')": 2.0,
+        "('grape2','wine3')": 2.4,
+        "('grape3','wine1')": 1.0,
+        "('grape3','wine2')": 0.5,
+        "('grape3','wine3')": 0.0,
+        "('grape4','wine1')": 0.3,
+        "('grape4','wine2')": 1.1,
+        "('grape4','wine3')": 1.6
+    },
+    "decision_domain": "discrete"
+}

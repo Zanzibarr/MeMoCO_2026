@@ -1,0 +1,46 @@
+{
+    "CPLEXSolution": {
+        "version": "1.0",
+        "header": {
+            "problemName": "farmer Tom",
+            "objectiveValue": "69500.0",
+            "solved_by": "cplex_local"
+        },
+        "variables": [
+            {
+                "index": "0",
+                "name": "hectars of tomatoes",
+                "value": "7.5",
+                "reducedCost": 0
+            },
+            {
+                "index": "1",
+                "name": "hectars of potatoes",
+                "value": "3.5",
+                "reducedCost": 0
+            }
+        ],
+        "linearConstraints": [
+            {
+                "name": "land availability",
+                "index": 0,
+                "dual": 5000.0
+            },
+            {
+                "name": "tomato-seeds availability",
+                "index": 1,
+                "slack": 17.5
+            },
+            {
+                "name": "poteto tubers availability",
+                "index": 2,
+                "slack": 7.5
+            },
+            {
+                "name": "fertilizer availability",
+                "index": 3,
+                "dual": 100.0
+            }
+        ]
+    }
+}

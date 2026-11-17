@@ -1,7 +1,7 @@
 from docplex.mp.model import Model
 import json
 
-with open("data/lab03_emergency_direct.json", "r") as f:
+with open("../Data/emergency_direct.json", "r") as f:
     data = json.load(f)
 
 model_name = data["modelname"]

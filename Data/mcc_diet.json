@@ -1,0 +1,35 @@
+{
+    "modelname": "mcc_diet",
+    "resourceSetI": [
+        "V",
+        "M",
+        "F"
+    ],
+    "requestSetJ": [
+        "p",
+        "i",
+        "c"
+    ],
+    "costC": {
+        "V": 4,
+        "M": 10,
+        "F": 7
+    },
+    "requestR": {
+        "p": 20,
+        "i": 30,
+        "c": 10
+    },
+    "contributionA": {
+        "('V','p')": 5,
+        "('V','i')": 6,
+        "('V','c')": 5,
+        "('M','p')": 15,
+        "('M','i')": 10,
+        "('M','c')": 3,
+        "('F','p')": 4,
+        "('F','i')": 5,
+        "('F','c')": 12
+    },
+    "decision_domain": "continuous"
+}

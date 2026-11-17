@@ -1,0 +1,41 @@
+{
+    "CPLEXSolution": {
+        "version": "1.0",
+        "header": {
+            "problemName": "perfumes model",
+            "objectiveValue": "2460.0",
+            "solved_by": "cplex_local"
+        },
+        "variables": [
+            {
+                "index": "0",
+                "name": "perfume one Dl",
+                "value": "12.000000000000002",
+                "reducedCost": 0
+            },
+            {
+                "index": "1",
+                "name": "perfume two Dl",
+                "value": "8.999999999999998",
+                "reducedCost": 0
+            }
+        ],
+        "linearConstraints": [
+            {
+                "name": null,
+                "index": 0,
+                "dual": 59.99999999999998
+            },
+            {
+                "name": null,
+                "index": 1,
+                "dual": 40.00000000000002
+            },
+            {
+                "name": null,
+                "index": 2,
+                "slack": 0.9000000000000004
+            }
+        ]
+    }
+}

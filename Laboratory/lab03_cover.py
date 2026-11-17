@@ -2,25 +2,25 @@ from docplex.mp.model import Model
 import json
 import ast
 
-with open("data/lab03_mcc_diet.json", "r") as f:
+with open("../Data/mcc_diet.json", "r") as f:
     data = json.load(f)
 
-model_name = data["modname"]
-I = data["resSetI"]
-J = data["reqSetJ"]
+model_name = data["modelname"]
+I = data["resourceSetI"]
+J = data["requestSetJ"]
 C = data["costC"]
-R = data["reqR"]
-A = {ast.literal_eval(k): v for k, v in data["contribA"].items()}
-domain = data["decdom"]
+R = data["requestR"]
+A = {ast.literal_eval(k): v for k, v in data["contributionA"].items()}
+domain = data["decision_domain"]
 
 m = Model(name=model_name)
 
 # Create the variables and store them into a dictionary
-if domain == "cont":
+if domain == "continuous":
     x = m.continuous_var_dict(I, name="x")
-elif domain == "int":
+elif domain == "discrete":
     x = m.integer_var_dict(I, name="x")
-elif domain == "bin":
+elif domain == "binary":
     x = m.binary_var_dict(I, name="x")
 else:
     print("ERROR: wrong var type")

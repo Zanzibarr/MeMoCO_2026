@@ -2,7 +2,7 @@ from docplex.mp.model import Model
 import json
 import sys
 
-with open("data/lab04_transport_plus.json", "r") as file:
+with open("../Data/transport_plus.json", "r") as file:
     data = json.load(file)
 
 model_name = data["modelname"]
