@@ -18,30 +18,6 @@ Models, examples and exercises for the MeMoCO course, written in **Python** (DOC
 └── Laboratory/       # code written during the laboratory sessions
 ```
 
-### Examples
-| Folder | Content | Python | C++ |
-|---|---|:-:|:-:|
-| `01_basic_models/farmer` | production planning, 2 variables | ✓ | ✓ |
-| `01_basic_models/shirts` | integer production planning | ✓ | ✓ |
-| `01_basic_models/optimal_production_mix` | production mix (perfumes) | ✓ | ✓ |
-| `01_basic_models/minimum_cost_covering` | minimum cost covering (diet) | ✓ | ✓ |
-| `01_basic_models/supermarket` | fixed costs, big-M | ✓ | ✓ |
-| `01_basic_models/transportation` | transportation problem | ✓ | ✓ |
-| `02_reading_json_file` | how to read a JSON file in Python | ✓ | |
-| `03_json_models` | one model, many instances read from `Data/` (production mix, covering) | ✓ | |
-| `04_python_vs_cpp` | the same large transportation model: Python data structures vs C++ timing | ✓ | ✓ |
-
-### Exercises
-| Folder | Content | Python | C++ |
-|---|---|:-:|:-:|
-| `01_first` | first use of `CPXnewcols` / `CPXaddrows` | | ✓ |
-| `02_moving_scaffolds` | transportation with trucks (fixed costs); C++ variants with variable maps and extensions | ✓ | ✓ |
-| `03_antennas` | antennas location with interference | ✓ | ✓ |
-| `04_italian_friends_jsp` | job-shop scheduling (with and without variable maps) | ✓ | ✓ |
-| `05_project_scheduling` | scheduling with optional / alternative operations | ✓ | |
-
-When a folder has both versions, they model the same problem. Any difference in the data or in the constraints is described at the top of both files.
-
 ## Running a Python program
 Activate the virtual environment, **move into the folder of the program**, and run it:
 ```bash
